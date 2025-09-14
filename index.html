@@ -4,7 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Christmas Countdown</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Count down the days until Christmas with this festive widget!">
+    <meta property="og:title" content="Christmas Countdown">
+    <meta property="og:description" content="A beautiful Christmas countdown widget">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Christmas Countdown Widget Styles */
+        .christmas-widget {
+            background: linear-gradient(135deg, #c73e1d 0%, #16a085 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .christmas-widget:hover {
+            transform: translateY(-5px);
+        }
+
+        .christmas-widget h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .countdown-display {
+            background: rgba(255,255,255,0.2);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .days-number {
+            font-size: 5rem;
+            font-weight: bold;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.4);
+            color: #fff;
+            line-height: 1;
+        }
+
+        .days-label {
+            font-size: 1.4rem;
+            margin-top: 1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .christmas-message {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            font-style: italic;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .christmas-widget {
+                padding: 2rem;
+            }
+            
+            .christmas-widget h2 {
+                font-size: 2rem;
+            }
+            
+            .days-number {
+                font-size: 3.5rem;
+            }
+            
+            .days-label {
+                font-size: 1.2rem;
+            }
+            
+            .christmas-message {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Add some festive snow animation */
+        @keyframes snow {
+            0% { transform: translateY(-100vh) translateX(0); }
+            100% { transform: translateY(100vh) translateX(100px); }
+        }
+        
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.8);
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+            animation: snow 10s linear infinite;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -18,8 +148,77 @@
             <div class="christmas-message" id="christmasMessage">🎄 Getting closer to the most wonderful time of year! 🌟</div>
         </div>
     </div>
-    
-    <script src="script.js"></script>
+
+    <script>
+        // Christmas Countdown
+        function updateChristmasCountdown() {
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            
+            // Christmas of current year
+            let christmas = new Date(currentYear, 11, 25); // December 25th
+            
+            // If Christmas has passed this year, use next year's Christmas
+            if (today > christmas) {
+                christmas = new Date(currentYear + 1, 11, 25);
+            }
+            
+            // Calculate difference in days
+            const timeDiff = christmas.getTime() - today.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            // Update the display
+            const daysElement = document.getElementById('daysToChristmas');
+            const messageElement = document.getElementById('christmasMessage');
+            
+            if (daysElement && messageElement) {
+                daysElement.textContent = daysDiff;
+                
+                // Different messages based on how close Christmas is
+                let message;
+                if (daysDiff === 0) {
+                    message = "🎅 Merry Christmas! It's here! 🎁";
+                } else if (daysDiff === 1) {
+                    message = "🎁 Christmas Eve! Santa's on his way! 🛷";
+                } else if (daysDiff <= 7) {
+                    message = "🔔 Christmas week! Time for final preparations! 🎀";
+                } else if (daysDiff <= 30) {
+                    message = "❄️ Christmas is just around the corner! ⭐";
+                } else if (daysDiff <= 100) {
+                    message = "🎄 Getting closer to the most wonderful time of year! 🌟";
+                } else {
+                    message = "🗓️ Start planning for the holiday season! 🎊";
+                }
+                
+                messageElement.textContent = message;
+            }
+        }
+
+        // Add some festive snow
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.innerHTML = '❄';
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            snowflake.style.animationDuration = (Math.random() * 3 + 7) + 's';
+            document.body.appendChild(snowflake);
+            
+            setTimeout(() => {
+                snowflake.remove();
+            }, 10000);
+        }
+
+        // Run when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateChristmasCountdown();
+            
+            // Create snowflakes periodically
+            setInterval(createSnowflake, 300);
+            
+            // Update countdown daily
+            setInterval(updateChristmasCountdown, 24 * 60 * 60 * 1000);
+        });
+    </script>
 </body>
 </html>
-
